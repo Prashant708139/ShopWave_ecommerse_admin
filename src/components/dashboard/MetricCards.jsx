@@ -20,9 +20,9 @@ export const MetricCards = () => {
       growth: `+${dynamicMetrics.revenueGrowth}%`,
       isPositive: true,
       icon: IndianRupee,
-      iconBg: 'bg-emerald-50 text-emerald-600',
-      iconBorder: 'border-emerald-100',
-      trendColor: '#10b981',
+      iconBg: 'bg-blue-50 text-blue-600',
+      iconBorder: 'border-blue-200',
+      trendColor: '#2563eb',
       sparkline: 'M0 25 Q15 22, 30 18 T60 20 T90 12 T120 5'
     },
     {
@@ -33,8 +33,8 @@ export const MetricCards = () => {
       isPositive: true,
       icon: ShoppingBag,
       iconBg: 'bg-blue-50 text-blue-600',
-      iconBorder: 'border-blue-100',
-      trendColor: '#3b82f6',
+      iconBorder: 'border-blue-200',
+      trendColor: '#2563eb',
       sparkline: 'M0 24 Q20 20, 40 22 T80 14 T120 4'
     },
     {
@@ -44,9 +44,9 @@ export const MetricCards = () => {
       growth: `+${dynamicMetrics.customersGrowth}%`,
       isPositive: true,
       icon: Users,
-      iconBg: 'bg-purple-50 text-purple-600',
-      iconBorder: 'border-purple-100',
-      trendColor: '#8b5cf6',
+      iconBg: 'bg-blue-50 text-blue-600',
+      iconBorder: 'border-blue-200',
+      trendColor: '#2563eb',
       sparkline: 'M0 26 Q25 24, 50 18 T90 10 T120 3'
     },
     {
@@ -56,9 +56,9 @@ export const MetricCards = () => {
       growth: `+${dynamicMetrics.productsGrowth}%`,
       isPositive: true,
       icon: Package,
-      iconBg: 'bg-amber-50 text-amber-600',
-      iconBorder: 'border-amber-100',
-      trendColor: '#f59e0b',
+      iconBg: 'bg-blue-50 text-blue-600',
+      iconBorder: 'border-blue-200',
+      trendColor: '#2563eb',
       sparkline: 'M0 22 Q30 20, 60 16 T90 12 T120 6'
     },
     {
@@ -69,8 +69,8 @@ export const MetricCards = () => {
       isPositive: false,
       icon: ShoppingBag,
       iconBg: 'bg-rose-50 text-rose-600',
-      iconBorder: 'border-rose-100',
-      trendColor: '#f43f5e',
+      iconBorder: 'border-rose-200',
+      trendColor: '#e11d48',
       sparkline: 'M0 5 Q25 8, 50 14 T80 20 T120 26'
     }
   ];
@@ -83,15 +83,15 @@ export const MetricCards = () => {
         return (
           <div
             key={card.id}
-            className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
+            className="bg-white rounded-md p-4 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between"
           >
             <div className="flex items-start justify-between gap-3 mb-3">
-              <div className={`p-2.5 rounded-xl ${card.iconBg} border ${card.iconBorder} flex items-center justify-center shadow-xs`}>
-                <Icon className="w-5 h-5 stroke-[2.2]" />
+              <div className={`p-2 rounded-md ${card.iconBg} border ${card.iconBorder} flex items-center justify-center`}>
+                <Icon className="w-4 h-4 stroke-[2.2]" />
               </div>
 
-              <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
-                card.isPositive ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'
+              <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-md ${
+                card.isPositive ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-rose-700 bg-rose-50 border border-rose-200'
               }`}>
                 {card.isPositive ? (
                   <TrendingUp className="w-3.5 h-3.5" />
@@ -105,18 +105,18 @@ export const MetricCards = () => {
             <div>
               <p className="text-xs font-medium text-slate-500 mb-1">{card.title}</p>
               <div className="flex items-baseline justify-between">
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">
+                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                   {card.value}
                 </h3>
               </div>
             </div>
 
             {/* Sparkline trend wave */}
-            <div className="mt-2 h-7 w-full">
+            <div className="mt-2 h-6 w-full">
               <svg className="w-full h-full overflow-visible" viewBox="0 0 120 30" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id={`grad-${card.id}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={card.trendColor} stopOpacity="0.35" />
+                    <stop offset="0%" stopColor={card.trendColor} stopOpacity="0.2" />
                     <stop offset="100%" stopColor={card.trendColor} stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
@@ -128,7 +128,7 @@ export const MetricCards = () => {
                   d={card.sparkline}
                   fill="none"
                   stroke={card.trendColor}
-                  strokeWidth="2.2"
+                  strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />

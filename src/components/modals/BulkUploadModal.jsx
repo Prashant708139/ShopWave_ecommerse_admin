@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Button } from '../ui/Button';
 import { X, Upload, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const BulkUploadModal = ({ isOpen, onClose }) => {
@@ -59,32 +60,32 @@ export const BulkUploadModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 animate-in fade-in zoom-in duration-200 overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-slate-100">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white rounded-md max-w-lg w-full shadow-lg border border-slate-200 overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b border-slate-200">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+            <div className="p-2 bg-blue-50 text-blue-600 rounded-md">
               <Upload className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-800 text-base">Bulk Upload Products</h3>
-              <p className="text-xs text-slate-400">Import products in JSON or structured format</p>
+              <h3 className="font-bold text-slate-900 text-base">Bulk Upload Products</h3>
+              <p className="text-xs text-slate-500">Import products in JSON or structured format</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">
+          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-700 rounded-md">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
-          <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-blue-400 transition-colors bg-slate-50/50">
-            <FileText className="w-8 h-8 text-blue-500 mx-auto mb-2 opacity-80" />
-            <p className="text-xs font-semibold text-slate-700">Paste JSON payload or use pre-filled sample</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">Click "Load Demo Batch" or type your custom array</p>
+        <div className="p-5 space-y-4">
+          <div className="border border-dashed border-slate-300 rounded-md p-4 text-center bg-slate-50">
+            <FileText className="w-7 h-7 text-blue-600 mx-auto mb-2 opacity-80" />
+            <p className="text-xs font-semibold text-slate-800">Paste JSON payload or use pre-filled sample</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">Click "Load Demo Batch" or type your custom array</p>
             <button
               type="button"
               onClick={() => setJsonText(sampleTemplate)}
-              className="mt-2 text-xs font-semibold text-blue-600 hover:text-blue-700 underline"
+              className="mt-2 text-xs font-semibold text-blue-600 hover:text-blue-700 underline cursor-pointer"
             >
               Load 2 Demo Products into Box
             </button>
@@ -100,31 +101,25 @@ export const BulkUploadModal = ({ isOpen, onClose }) => {
                 setUploadStatus(null);
               }}
               placeholder={sampleTemplate}
-              className="w-full font-mono text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 bg-slate-50"
+              className="w-full font-mono text-xs p-3 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900 bg-white"
             />
           </div>
 
           {uploadStatus?.error && (
-            <div className="flex items-center gap-2 p-3 bg-rose-50 text-rose-700 rounded-xl text-xs border border-rose-100">
+            <div className="flex items-center gap-2 p-3 bg-rose-50 text-rose-700 rounded-md text-xs border border-rose-200">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{uploadStatus.error}</span>
             </div>
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 p-4 bg-slate-50 border-t border-slate-100">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200/60 rounded-xl"
-          >
+        <div className="flex items-center justify-end gap-2 p-4 bg-slate-50 border-t border-slate-200">
+          <Button variant="secondary" onClick={onClose}>
             Cancel
-          </button>
-          <button
-            onClick={handleImport}
-            className="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition-all flex items-center gap-1.5"
-          >
-            <CheckCircle2 className="w-4 h-4" /> Import Products
-          </button>
+          </Button>
+          <Button variant="primary" icon={CheckCircle2} onClick={handleImport}>
+            Import Products
+          </Button>
         </div>
       </div>
     </div>

@@ -42,7 +42,6 @@ export const Sidebar = () => {
     setIsMobileMenuOpen,
   } = useApp();
 
-  // Keep dropdown open states
   const [openMenus, setOpenMenus] = useState({
     catalog: true,
     orders: false,
@@ -307,31 +306,34 @@ export const Sidebar = () => {
       {isMobileMenuOpen && (
         <div
           onClick={() => setIsMobileMenuOpen(false)}
-          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-slate-900/40 z-40 md:hidden backdrop-blur-xs transition-opacity"
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Light Mode Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-[#0c1322] border-r border-[#1a243a] flex flex-col transition-transform duration-300 ease-in-out md:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex flex-col transition-transform duration-200 ease-in-out md:translate-x-0 ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Brand Header */}
-        <div className="p-5 flex items-center justify-between border-b border-[#182238]">
+        <div className="p-4 flex items-center justify-between border-b border-slate-200">
           <div
-            onClick={() => navigateTo("dashboard")}
+            onClick={() => {
+              navigateTo("dashboard");
+              setIsMobileMenuOpen(false);
+            }}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            {/* Logo Icon */}
-            <div className="w-10 h-10 rounded-md bg-blue-600 flex items-center justify-center shadow-md shadow-blue-600/20 group-hover:scale-105 transition-transform">
-              <ShoppingBag className="w-5 h-5 text-white" />
+            {/* Solid Logo Icon */}
+            <div className="w-9 h-9 rounded-md bg-blue-600 flex items-center justify-center text-white shadow-xs group-hover:bg-blue-700 transition-colors">
+              <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-1">
+              <h1 className="text-lg font-bold text-slate-900 tracking-tight leading-tight">
                 ShopWave
               </h1>
-              <p className="text-[10px] font-medium text-slate-400 tracking-wide">
+              <p className="text-[10px] font-medium text-slate-500 tracking-wide">
                 Smart. Simple. Shopping.
               </p>
             </div>
@@ -340,14 +342,14 @@ export const Sidebar = () => {
           {/* Mobile Close Button */}
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="md:hidden text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+            className="md:hidden text-slate-500 hover:text-slate-800 p-1 rounded-md hover:bg-slate-100"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Navigation Links with custom scrollbar */}
-        <div className="flex-1 overflow-y-auto dark-scrollbar py-4 px-3 space-y-1.5">
+        {/* Navigation Links */}
+        <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isSelected =
@@ -360,15 +362,18 @@ export const Sidebar = () => {
               return (
                 <button
                   key={item.id}
-                  onClick={() => navigateTo(item.tab)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  onClick={() => {
+                    navigateTo(item.tab);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                   }`}
                 >
                   <Icon
-                    className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-400"}`}
+                    className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-500"}`}
                   />
                   <span className="flex-1 text-left">{item.label}</span>
                 </button>
@@ -376,29 +381,29 @@ export const Sidebar = () => {
             }
 
             return (
-              <div key={item.id} className="space-y-1">
+              <div key={item.id} className="space-y-0.5">
                 <button
                   onClick={() => toggleMenu(item.id)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isSelected
-                      ? "text-white bg-slate-800/40"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                      ? "text-slate-900 bg-slate-100 font-semibold"
+                      : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="w-5 h-5 text-slate-400" />
+                    <Icon className="w-4 h-4 text-slate-500" />
                     <span>{item.label}</span>
                   </div>
                   {isOpen ? (
-                    <ChevronDown className="w-4 h-4 text-slate-400 transition-transform duration-200" />
+                    <ChevronDown className="w-4 h-4 text-slate-400" />
                   ) : (
-                    <ChevronRight className="w-4 h-4 text-slate-400 transition-transform duration-200" />
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
                   )}
                 </button>
 
                 {/* Submenu Dropdown Items */}
                 {isOpen && item.children && (
-                  <div className="pl-4 pr-1 py-1 space-y-1">
+                  <div className="pl-4 pr-1 py-0.5 space-y-0.5">
                     {item.children.map((child) => {
                       const ChildIcon = child.icon;
                       const isChildActive =
@@ -410,15 +415,18 @@ export const Sidebar = () => {
                       return (
                         <button
                           key={child.id}
-                          onClick={() => navigateTo(child.id)}
-                          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                          onClick={() => {
+                            navigateTo(child.id);
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                             isChildActive
-                              ? "text-blue-400 bg-blue-500/10 font-semibold"
-                              : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+                              ? "text-blue-700 bg-blue-50 font-semibold"
+                              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                           }`}
                         >
                           <ChildIcon
-                            className={`w-4 h-4 ${isChildActive ? "text-blue-400" : "text-slate-500"}`}
+                            className={`w-3.5 h-3.5 ${isChildActive ? "text-blue-600" : "text-slate-400"}`}
                           />
                           <span className="truncate">{child.label}</span>
                         </button>
@@ -431,21 +439,23 @@ export const Sidebar = () => {
           })}
         </div>
 
-        {/* Bottom User Card matching screenshot ("Admin - Super Admin") */}
-        <div className="p-3 border-t border-[#182238] relative">
+        {/* Bottom Light Profile Card */}
+        <div className="p-3 border-t border-slate-200 relative bg-slate-50/50">
           <div
             onClick={() => setShowAdminDropdown(!showAdminDropdown)}
-            className="flex items-center justify-between p-2 rounded-xl bg-[#131b2e] hover:bg-[#1a253d] cursor-pointer transition-colors border border-[#1e2a44]"
+            className="flex items-center justify-between p-2 rounded-md bg-white hover:bg-slate-100 border border-slate-200 cursor-pointer transition-colors"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <img
                 src={currentUser.avatar}
                 alt="Admin"
-                className="w-8 h-8 rounded-full object-cover ring-1 ring-blue-500/30"
+                className="w-7 h-7 rounded-full object-cover ring-1 ring-slate-300"
               />
               <div className="min-w-0">
-                <p className="text-xs font-bold text-white truncate">Admin</p>
-                <p className="text-[11px] text-slate-400 truncate">
+                <p className="text-xs font-bold text-slate-900 truncate">
+                  Admin
+                </p>
+                <p className="text-[11px] text-slate-500 truncate">
                   Super Admin
                 </p>
               </div>
@@ -453,14 +463,14 @@ export const Sidebar = () => {
             <ChevronDown className="w-4 h-4 text-slate-400" />
           </div>
 
-          {/* Quick Admin Dropdown */}
+          {/* Quick Admin Dropdown Popover */}
           {showAdminDropdown && (
-            <div className="absolute bottom-16 left-3 right-3 bg-[#131b2e] border border-[#1e2a44] rounded-xl shadow-2xl p-2 z-50 space-y-1">
-              <div className="px-3 py-2 border-b border-[#1e2a44]">
-                <p className="text-xs font-bold text-white">
+            <div className="absolute bottom-16 left-3 right-3 bg-white border border-slate-200 rounded-md shadow-lg p-1.5 z-50 space-y-0.5">
+              <div className="px-3 py-2 border-b border-slate-100">
+                <p className="text-xs font-bold text-slate-900">
                   {currentUser.name}
                 </p>
-                <p className="text-[11px] text-slate-400 truncate">
+                <p className="text-[11px] text-slate-500 truncate">
                   {currentUser.email}
                 </p>
               </div>
@@ -470,7 +480,7 @@ export const Sidebar = () => {
                   navigateTo("settings");
                   setShowAdminDropdown(false);
                 }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-left"
+                className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-100 rounded-md text-left transition-colors"
               >
                 <Settings className="w-3.5 h-3.5 text-slate-400" /> System
                 Settings
@@ -481,9 +491,9 @@ export const Sidebar = () => {
                   setShowAdminDropdown(false);
                   logout();
                 }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg text-left font-medium"
+                className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-rose-600 hover:bg-rose-50 rounded-md text-left font-medium transition-colors"
               >
-                <LogOut className="w-3.5 h-3.5" /> Sign Out
+                <LogOut className="w-3.5 h-3.5 text-rose-500" /> Sign Out
               </button>
             </div>
           )}

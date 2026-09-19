@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, Upload, Image as ImageIcon, Check, Paperclip, Camera } from 'lucide-react';
+import { Button } from '../ui/Button';
+import { Select } from '../ui/Select';
+import { X, Upload, Image as ImageIcon, Check } from 'lucide-react';
 
 export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
   const { addProduct, updateProduct, showToast } = useApp();
@@ -21,6 +23,17 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
     specsChip: '',
     specsStorage: '',
   });
+
+  const categoryOptions = [
+    { value: 'Mobiles', label: 'Mobiles' },
+    { value: 'Laptops', label: 'Laptops' },
+    { value: 'Electronics', label: 'Electronics' },
+    { value: 'Footwear', label: 'Footwear' },
+    { value: 'Men Clothing', label: 'Men Clothing' },
+    { value: 'Home & Living', label: 'Home & Living' },
+    { value: 'Books', label: 'Books' },
+    { value: 'Home Care', label: 'Home Care' },
+  ];
 
   useEffect(() => {
     if (initialData) {
@@ -60,7 +73,6 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
 
   if (!isOpen) return null;
 
-  // Handle local file upload & convert to base64
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -115,27 +127,25 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 animate-in fade-in zoom-in duration-200">
-        {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-100 sticky top-0 bg-white z-10">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white rounded-md max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg border border-slate-200">
+        <div className="flex items-center justify-between p-5 border-b border-slate-200 sticky top-0 bg-white z-10">
           <div>
-            <h3 className="text-lg font-bold text-slate-800">
+            <h3 className="text-lg font-bold text-slate-900">
               {initialData ? 'Edit Product' : 'Add New Product'}
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               {initialData ? `Updating ${initialData.sku}` : 'Fill in the information to add a product to catalog'}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+            className="text-slate-400 hover:text-slate-700 p-1.5 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -146,7 +156,7 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
                 placeholder="e.g. iPhone 15 Pro Max"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900"
               />
             </div>
 
@@ -157,7 +167,7 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
                 placeholder="e.g. Apple-iPhone 15 (128GB)"
                 value={formData.subtitle}
                 onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-                className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900"
               />
             </div>
           </div>
@@ -170,26 +180,19 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
                 placeholder="e.g. IPH-15-128"
                 value={formData.sku}
                 onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900 font-mono"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
-              <select
+              <Select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-blue-500"
-              >
-                <option value="Mobiles">Mobiles</option>
-                <option value="Laptops">Laptops</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Footwear">Footwear</option>
-                <option value="Men Clothing">Men Clothing</option>
-                <option value="Home & Living">Home & Living</option>
-                <option value="Books">Books</option>
-                <option value="Home Care">Home Care</option>
-              </select>
+                options={categoryOptions}
+                size="md"
+                fullWidth
+              />
             </div>
 
             <div>
@@ -199,7 +202,7 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
                 placeholder="e.g. Apple, Nike"
                 value={formData.brand}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900"
               />
             </div>
           </div>
@@ -213,7 +216,7 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
                 placeholder="79999"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900"
               />
             </div>
 
@@ -224,7 +227,7 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
                 placeholder="89999"
                 value={formData.originalPrice}
                 onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
-                className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900"
               />
             </div>
 
@@ -235,16 +238,15 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
                 placeholder="45"
                 value={formData.stock}
                 onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900"
               />
             </div>
           </div>
 
-          {/* Product Image: URL + File Upload */}
           <div className="space-y-2">
             <label className="block text-xs font-semibold text-slate-700">Product Image (URL or Upload File)</label>
             <div className="flex flex-col sm:flex-row gap-3 items-center">
-              <div className="w-20 h-20 rounded-2xl border-2 border-slate-200 flex-shrink-0 overflow-hidden bg-slate-50 flex items-center justify-center relative group">
+              <div className="w-16 h-16 rounded-md border border-slate-300 flex-shrink-0 overflow-hidden bg-slate-50 flex items-center justify-center relative">
                 {formData.image ? (
                   <img src={formData.image} alt="Preview" className="w-full h-full object-contain p-1" />
                 ) : (
@@ -258,7 +260,7 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
                   placeholder="Paste Image URL..."
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full text-xs px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500"
+                  className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900"
                 />
 
                 <div className="flex items-center gap-2">
@@ -269,14 +271,16 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
                     onChange={handleFileUpload}
                     className="hidden"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="secondary"
+                    size="sm"
+                    icon={Upload}
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
-                    <Upload className="w-3.5 h-3.5 text-blue-600" /> Upload from Computer
-                  </button>
-                  <span className="text-[11px] text-slate-400">JPG, PNG, WebP</span>
+                    Upload from Computer
+                  </Button>
+                  <span className="text-[11px] text-slate-500">JPG, PNG, WebP</span>
                 </div>
               </div>
             </div>
@@ -286,57 +290,47 @@ export const ProductModal = ({ isOpen, onClose, initialData = null }) => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">Full Description</label>
             <textarea
               rows="3"
-              placeholder="Enter product description, highlights, and warranty terms..."
+              placeholder="Enter product description..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500"
+              className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-blue-600 text-slate-900"
             />
           </div>
 
-          {/* Key Specs */}
-          <div className="p-3.5 bg-slate-50 rounded-xl space-y-2 border border-slate-100">
-            <span className="text-xs font-bold text-slate-700 block">Key Specifications</span>
+          <div className="p-3 bg-slate-50 rounded-md space-y-2 border border-slate-200">
+            <span className="text-xs font-bold text-slate-900 block">Key Specifications</span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <input
                 type="text"
                 placeholder="Display spec"
                 value={formData.specsDisplay}
                 onChange={(e) => setFormData({ ...formData, specsDisplay: e.target.value })}
-                className="text-xs px-3 py-2 bg-white rounded-lg border border-slate-200"
+                className="text-xs px-3 py-1.5 bg-white rounded-md border border-slate-300 text-slate-900"
               />
               <input
                 type="text"
                 placeholder="Processor spec"
                 value={formData.specsChip}
                 onChange={(e) => setFormData({ ...formData, specsChip: e.target.value })}
-                className="text-xs px-3 py-2 bg-white rounded-lg border border-slate-200"
+                className="text-xs px-3 py-1.5 bg-white rounded-md border border-slate-300 text-slate-900"
               />
               <input
                 type="text"
-                placeholder="Storage / Memory"
+                placeholder="Storage spec"
                 value={formData.specsStorage}
                 onChange={(e) => setFormData({ ...formData, specsStorage: e.target.value })}
-                className="text-xs px-3 py-2 bg-white rounded-lg border border-slate-200"
+                className="text-xs px-3 py-1.5 bg-white rounded-md border border-slate-300 text-slate-900"
               />
             </div>
           </div>
 
-          {/* Footer Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
-            >
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
+            <Button type="button" variant="secondary" onClick={onClose}>
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <Check className="w-4 h-4" />
+            </Button>
+            <Button type="submit" variant="primary" icon={Check}>
               {initialData ? 'Save Changes' : 'Create Product'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

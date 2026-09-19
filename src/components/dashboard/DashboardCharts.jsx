@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Select } from '../ui/Select';
 import {
   ORDERS_STATUS_DATA,
   TOP_CATEGORIES_DATA
@@ -11,12 +12,11 @@ import {
   Tv,
   Sparkles,
   Package,
-  ChevronDown
 } from 'lucide-react';
 
 export const DashboardCharts = () => {
   const { navigateTo, currentSalesChart, selectedDateRange } = useApp();
-  const [chartMode, setChartMode] = useState('revenue'); // 'revenue' or 'orders'
+  const [chartMode, setChartMode] = useState('revenue');
   const [hoveredBarIndex, setHoveredBarIndex] = useState(null);
 
   const categoryIcons = {
@@ -30,7 +30,6 @@ export const DashboardCharts = () => {
 
   const chartData = currentSalesChart || [];
 
-  // Determine dynamic max value for nice bar scaling
   const maxValCalc = chartData.reduce((max, item) => {
     const val = chartMode === 'revenue' ? item.revenue : item.orders;
     return Math.max(max, val);
@@ -38,27 +37,28 @@ export const DashboardCharts = () => {
 
   const maxAxisVal = maxValCalc * 1.15;
 
+  const modeOptions = [
+    { value: 'revenue', label: 'Revenue' },
+    { value: 'orders', label: 'Orders' },
+  ];
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mt-5">
-      {/* 1. Sales Overview Bar Chart (5 cols on lg) */}
-      <div className="lg:col-span-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] flex flex-col justify-between">
+      {/* 1. Sales Overview Bar Chart */}
+      <div className="lg:col-span-5 bg-white rounded-md p-4 sm:p-5 border border-slate-200 shadow-xs flex flex-col justify-between">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="font-bold text-slate-800 text-base">Sales Overview</h3>
-            <span className="text-[11px] text-slate-400 font-medium">Timeline: {selectedDateRange}</span>
+            <h3 className="font-bold text-slate-900 text-base">Sales Overview</h3>
+            <span className="text-[11px] text-slate-500 font-medium">Timeline: {selectedDateRange}</span>
           </div>
 
-          <div className="relative">
-            <select
-              value={chartMode}
-              onChange={(e) => setChartMode(e.target.value)}
-              className="appearance-none bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600 rounded-lg pl-3 pr-7 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
-            >
-              <option value="revenue">Revenue</option>
-              <option value="orders">Orders</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-2.5 pointer-events-none" />
-          </div>
+          <Select
+            value={chartMode}
+            onChange={(e) => setChartMode(e.target.value)}
+            options={modeOptions}
+            size="sm"
+            align="right"
+          />
         </div>
 
         {/* Bar Chart Area */}
@@ -127,17 +127,15 @@ export const DashboardCharts = () => {
                   onMouseEnter={() => setHoveredBarIndex(index)}
                   onMouseLeave={() => setHoveredBarIndex(null)}
                 >
-                  {/* Tooltip on hover */}
                   {hoveredBarIndex === index && (
-                    <div className="absolute -top-10 z-20 bg-slate-900 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-lg whitespace-nowrap animate-in fade-in zoom-in duration-150">
+                    <div className="absolute -top-10 z-20 bg-slate-900 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-md whitespace-nowrap">
                       {chartMode === 'revenue' ? `₹${item.revenue.toLocaleString('en-IN')}` : `${item.orders} orders`}
                     </div>
                   )}
 
-                  {/* Vertical Bar */}
                   <div
                     style={{ height: `${heightPercent}%` }}
-                    className="w-3 sm:w-4 bg-blue-500 group-hover:bg-blue-600 rounded-t-md transition-all duration-300 shadow-sm"
+                    className="w-3 sm:w-4 bg-blue-600 group-hover:bg-blue-700 rounded-t-sm transition-all duration-200"
                   />
                 </div>
               );
@@ -153,15 +151,13 @@ export const DashboardCharts = () => {
         </div>
       </div>
 
-      {/* 2. Orders by Status Donut Chart (4 cols on lg) */}
-      <div className="lg:col-span-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] flex flex-col justify-between">
-        <h3 className="font-bold text-slate-800 text-base mb-2">Orders by Status</h3>
+      {/* 2. Orders by Status Donut Chart */}
+      <div className="lg:col-span-4 bg-white rounded-md p-4 sm:p-5 border border-slate-200 shadow-xs flex flex-col justify-between">
+        <h3 className="font-bold text-slate-900 text-base mb-2">Orders by Status</h3>
 
         <div className="flex flex-col sm:flex-row lg:flex-row items-center justify-around gap-4 my-auto">
-          {/* Custom SVG Donut Chart */}
           <div className="relative w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center flex-shrink-0">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-              {/* Delivered: 62% */}
               <circle
                 cx="50"
                 cy="50"
@@ -172,22 +168,18 @@ export const DashboardCharts = () => {
                 strokeDasharray="238.76"
                 strokeDashoffset="0"
                 strokeLinecap="round"
-                className="transition-all duration-500"
               />
-              {/* Processing: 18% */}
               <circle
                 cx="50"
                 cy="50"
                 r="38"
                 fill="transparent"
-                stroke="#3b82f6"
+                stroke="#2563eb"
                 strokeWidth="14"
                 strokeDasharray="238.76"
                 strokeDashoffset="148"
                 strokeLinecap="round"
-                className="transition-all duration-500"
               />
-              {/* Shipped: 12% */}
               <circle
                 cx="50"
                 cy="50"
@@ -198,9 +190,7 @@ export const DashboardCharts = () => {
                 strokeDasharray="238.76"
                 strokeDashoffset="191"
                 strokeLinecap="round"
-                className="transition-all duration-500"
               />
-              {/* Pending: 5% */}
               <circle
                 cx="50"
                 cy="50"
@@ -211,9 +201,7 @@ export const DashboardCharts = () => {
                 strokeDasharray="238.76"
                 strokeDashoffset="220"
                 strokeLinecap="round"
-                className="transition-all duration-500"
               />
-              {/* Cancelled: 3% */}
               <circle
                 cx="50"
                 cy="50"
@@ -224,42 +212,39 @@ export const DashboardCharts = () => {
                 strokeDasharray="238.76"
                 strokeDashoffset="232"
                 strokeLinecap="round"
-                className="transition-all duration-500"
               />
             </svg>
 
-            {/* Inner Center Label */}
             <div className="absolute text-center">
-              <span className="block text-lg font-extrabold text-slate-800 leading-none">1,482</span>
-              <span className="text-[11px] font-medium text-slate-400">Total Orders</span>
+              <span className="block text-lg font-extrabold text-slate-900 leading-none">1,482</span>
+              <span className="text-[11px] font-medium text-slate-500">Total Orders</span>
             </div>
           </div>
 
-          {/* Status Breakdown Legend */}
           <div className="space-y-2 text-xs w-full sm:w-auto">
             {ORDERS_STATUS_DATA.map((status) => (
               <div key={status.name} className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <span
-                    className="w-2.5 h-2.5 rounded-full"
+                    className="w-2.5 h-2.5 rounded-sm"
                     style={{ backgroundColor: status.color }}
                   />
                   <span className="text-slate-600 font-medium">{status.name}</span>
                 </div>
-                <span className="font-bold text-slate-800">{status.value}%</span>
+                <span className="font-bold text-slate-900">{status.value}%</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* 3. Top Categories Progress Bars (3 cols on lg) */}
-      <div className="lg:col-span-3 bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] flex flex-col justify-between">
+      {/* 3. Top Categories Progress Bars */}
+      <div className="lg:col-span-3 bg-white rounded-md p-4 sm:p-5 border border-slate-200 shadow-xs flex flex-col justify-between">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-slate-800 text-base">Top Categories</h3>
+          <h3 className="font-bold text-slate-900 text-base">Top Categories</h3>
           <button
             onClick={() => navigateTo('catalog-categories')}
-            className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+            className="text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
           >
             View All
           </button>
@@ -280,12 +265,12 @@ export const DashboardCharts = () => {
                       {cat.name}
                     </span>
                   </div>
-                  <span className="font-bold text-slate-800">{cat.percentage}%</span>
+                  <span className="font-bold text-slate-900">{cat.percentage}%</span>
                 </div>
 
-                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                <div className="w-full bg-slate-100 rounded-md h-1.5 overflow-hidden">
                   <div
-                    className="bg-blue-600 h-full rounded-full transition-all duration-500"
+                    className="bg-blue-600 h-full rounded-md transition-all duration-300"
                     style={{ width: `${cat.percentage * 2.5}%` }}
                   />
                 </div>

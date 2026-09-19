@@ -19,6 +19,11 @@ import { NotificationHistoryView } from "./components/notifications/Notification
 import { LoginView } from "./components/auth/LoginView";
 import { CheckCircle2, Info, AlertTriangle } from "lucide-react";
 
+import { AddEditProductView } from "./components/products/AddEditProductView";
+import { BulkProductUploadView } from "./components/products/BulkProductUploadView";
+import { CategoryManagementView } from "./components/catalog/CategoryManagementView";
+import { OrderCreateDetailView } from "./components/orders/OrderCreateDetailView";
+
 export function AppContent() {
   const { isAuthenticated, activeTab, toast, clerkPublishableKey } = useApp();
 
@@ -36,8 +41,14 @@ export function AppContent() {
         return <Dashboard />;
       case "catalog-products":
         return <Dashboard />;
+      case "add-product":
+      case "edit-product":
+        return <AddEditProductView />;
+      case "bulk-import":
+        return <BulkProductUploadView />;
       case "catalog-categories":
-        return <CatalogViews viewType="categories" />;
+      case "category-management":
+        return <CategoryManagementView />;
       case "catalog-attributes":
         return <CatalogViews viewType="attributes" />;
       case "catalog-brands":
@@ -46,6 +57,10 @@ export function AppContent() {
         return <CatalogViews viewType="collections" />;
       case "orders":
         return <OrdersView />;
+      case "create-order":
+        return <OrderCreateDetailView mode="create" />;
+      case "order-detail":
+        return <OrderCreateDetailView mode="detail" />;
       case "customers":
         return <CustomersView />;
       case "inventory":
