@@ -38,51 +38,75 @@ export function AppContent() {
   const renderActiveView = () => {
     switch (activeTab) {
       case "dashboard":
-        return <Dashboard />;
+        return <Dashboard key="dashboard" />;
       case "catalog-products":
-        return <Dashboard />;
+        return <Dashboard key="catalog-products" />;
       case "add-product":
       case "edit-product":
-        return <AddEditProductView />;
+        return <AddEditProductView key={activeTab} />;
       case "bulk-import":
-        return <BulkProductUploadView />;
+        return <BulkProductUploadView key="bulk-import" />;
       case "catalog-categories":
       case "category-management":
-        return <CategoryManagementView />;
+        return <CategoryManagementView key={activeTab} />;
       case "catalog-attributes":
-        return <CatalogViews viewType="attributes" />;
+        return <CatalogViews key="catalog-attributes" viewType="attributes" />;
       case "catalog-brands":
-        return <CatalogViews viewType="brands" />;
+        return <CatalogViews key="catalog-brands" viewType="brands" />;
       case "catalog-collections":
-        return <CatalogViews viewType="collections" />;
+        return <CatalogViews key="catalog-collections" viewType="collections" />;
       case "orders":
-        return <OrdersView />;
+        return <OrdersView key="orders" initialStatus="All" initialTab="orders" />;
+      case "orders-pending":
+        return <OrdersView key="orders-pending" initialStatus="Pending" initialTab="orders" />;
+      case "orders-returns":
+        return <OrdersView key="orders-returns" initialStatus="Cancelled" initialTab="orders" />;
+      case "orders-invoices":
+        return <OrdersView key="orders-invoices" initialStatus="All" initialTab="invoices" />;
       case "create-order":
-        return <OrderCreateDetailView mode="create" />;
+        return <OrderCreateDetailView key="create-order" mode="create" />;
       case "order-detail":
-        return <OrderCreateDetailView mode="detail" />;
+        return <OrderCreateDetailView key="order-detail" mode="detail" />;
       case "customers":
-        return <CustomersView />;
+        return <CustomersView key="customers" initialTab="directory" />;
+      case "customers-segments":
+        return <CustomersView key="customers-segments" initialTab="segments" />;
       case "inventory":
-        return <InventoryView />;
+        return <InventoryView key="inventory" initialTab="stock" />;
+      case "inventory-warehouses":
+        return <InventoryView key="inventory-warehouses" initialTab="warehouses" />;
       case "pricing":
-        return <PricingView />;
+        return <PricingView key="pricing" initialTab="rules" />;
+      case "pricing-lists":
+        return <PricingView key="pricing-lists" initialTab="pricelists" />;
       case "marketing":
-        return <MarketingView />;
+        return <MarketingView key="marketing" initialTab="campaigns" />;
+      case "marketing-newsletters":
+        return <MarketingView key="marketing-newsletters" initialTab="newsletters" />;
+      case "marketing-seo":
+        return <MarketingView key="marketing-seo" initialTab="seo" />;
       case "promotions":
-        return <PromotionsView />;
+        return <PromotionsView key="promotions" initialTab="vouchers" />;
+      case "promotions-flash":
+        return <PromotionsView key="promotions-flash" initialTab="flash" />;
       case "content":
-        return <ContentView />;
+        return <ContentView key="content" initialTab="pages" />;
+      case "content-blogs":
+        return <ContentView key="content-blogs" initialTab="blogs" />;
       case "reports":
-        return <ReportsView />;
+        return <ReportsView key="reports" initialTab="sales" />;
+      case "reports-analytics":
+        return <ReportsView key="reports-analytics" initialTab="analytics" />;
       case "settings":
-        return <SettingsView />;
+        return <SettingsView key="settings" initialTab="general" />;
+      case "settings-payment":
+        return <SettingsView key="settings-payment" initialTab="payment" />;
       case "notifications-history":
-        return <NotificationHistoryView />;
+        return <NotificationHistoryView key="notifications-history" />;
       case "product-detail":
-        return <ProductDetail />;
+        return <ProductDetail key="product-detail" />;
       default:
-        return <Dashboard />;
+        return <Dashboard key="default" />;
     }
   };
 

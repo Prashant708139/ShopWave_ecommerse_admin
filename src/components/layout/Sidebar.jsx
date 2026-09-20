@@ -44,15 +44,15 @@ export const Sidebar = () => {
 
   const [openMenus, setOpenMenus] = useState({
     catalog: true,
-    orders: false,
-    customers: false,
-    inventory: false,
-    pricing: false,
-    marketing: false,
-    promotions: false,
-    content: false,
-    reports: false,
-    settings: false,
+    orders: true,
+    customers: true,
+    inventory: true,
+    pricing: true,
+    marketing: true,
+    promotions: true,
+    content: true,
+    reports: true,
+    settings: true,
   });
 
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
@@ -126,19 +126,19 @@ export const Sidebar = () => {
           id: "orders-pending",
           label: "Pending Orders",
           icon: Truck,
-          tab: "orders",
+          tab: "orders-pending",
         },
         {
           id: "orders-returns",
           label: "Returns & Refunds",
           icon: RotateCcw,
-          tab: "orders",
+          tab: "orders-returns",
         },
         {
           id: "orders-invoices",
           label: "Invoices",
           icon: FileSpreadsheet,
-          tab: "orders",
+          tab: "orders-invoices",
         },
       ],
     },
@@ -158,7 +158,7 @@ export const Sidebar = () => {
           id: "customers-segments",
           label: "Segments",
           icon: ShieldCheck,
-          tab: "customers",
+          tab: "customers-segments",
         },
       ],
     },
@@ -178,7 +178,7 @@ export const Sidebar = () => {
           id: "inventory-warehouses",
           label: "Warehouses",
           icon: Building2,
-          tab: "inventory",
+          tab: "inventory-warehouses",
         },
       ],
     },
@@ -193,7 +193,7 @@ export const Sidebar = () => {
           id: "pricing-lists",
           label: "Price Lists",
           icon: BadgePercent,
-          tab: "pricing",
+          tab: "pricing-lists",
         },
       ],
     },
@@ -213,13 +213,13 @@ export const Sidebar = () => {
           id: "marketing-newsletters",
           label: "Newsletters",
           icon: Mail,
-          tab: "marketing",
+          tab: "marketing-newsletters",
         },
         {
           id: "marketing-seo",
           label: "SEO Config",
           icon: Globe,
-          tab: "marketing",
+          tab: "marketing-seo",
         },
       ],
     },
@@ -239,7 +239,7 @@ export const Sidebar = () => {
           id: "promotions-flash",
           label: "Flash Sales",
           icon: Flame,
-          tab: "promotions",
+          tab: "promotions-flash",
         },
       ],
     },
@@ -254,7 +254,7 @@ export const Sidebar = () => {
           id: "content-blogs",
           label: "Blog Posts",
           icon: Sparkles,
-          tab: "content",
+          tab: "content-blogs",
         },
       ],
     },
@@ -274,7 +274,7 @@ export const Sidebar = () => {
           id: "reports-analytics",
           label: "Store Analytics",
           icon: FileSpreadsheet,
-          tab: "reports",
+          tab: "reports-analytics",
         },
       ],
     },
@@ -294,7 +294,7 @@ export const Sidebar = () => {
           id: "settings-payment",
           label: "Payment & Shipping",
           icon: Truck,
-          tab: "settings",
+          tab: "settings-payment",
         },
       ],
     },
@@ -382,24 +382,42 @@ export const Sidebar = () => {
 
             return (
               <div key={item.id} className="space-y-0.5">
-                <button
-                  onClick={() => toggleMenu(item.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                <div
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                     isSelected
                       ? "text-slate-900 bg-slate-100 font-semibold"
                       : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4 text-slate-500" />
+                  {/* Left Label & Icon -> Navigate to primary route & expand */}
+                  <div
+                    onClick={() => {
+                      if (!isOpen) toggleMenu(item.id);
+                      const defaultTab = item.children ? item.children[0].id : item.id;
+                      navigateTo(defaultTab);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 flex-1"
+                  >
+                    <Icon className={`w-4 h-4 ${isSelected ? "text-blue-600" : "text-slate-500"}`} />
                     <span>{item.label}</span>
                   </div>
-                  {isOpen ? (
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 text-slate-400" />
-                  )}
-                </button>
+
+                  {/* Right Arrow -> Toggle Submenu */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleMenu(item.id);
+                    }}
+                    className="p-1 text-slate-400 hover:text-slate-700 rounded-md"
+                  >
+                    {isOpen ? (
+                      <ChevronDown className="w-4 h-4 text-slate-500" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    )}
+                  </button>
+                </div>
 
                 {/* Submenu Dropdown Items */}
                 {isOpen && item.children && (
@@ -408,15 +426,14 @@ export const Sidebar = () => {
                       const ChildIcon = child.icon;
                       const isChildActive =
                         activeTab === child.id ||
-                        (child.id === "catalog-products" &&
-                          activeTab === "catalog-products") ||
-                        (child.tab === activeTab && !child.id.includes("-"));
+                        activeTab === child.tab ||
+                        (child.id === "catalog-products" && activeTab === "dashboard");
 
                       return (
                         <button
                           key={child.id}
                           onClick={() => {
-                            navigateTo(child.id);
+                            navigateTo(child.tab || child.id);
                             setIsMobileMenuOpen(false);
                           }}
                           className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${

@@ -20,11 +20,12 @@ import {
   Globe,
   CheckCircle2,
   XCircle,
-  FileText
+  FileText,
+  ArrowLeft
 } from 'lucide-react';
 
 export const CategoryManagementView = () => {
-  const { categoryTree, addCategoryItem, showToast } = useApp();
+  const { categoryTree, addCategoryItem, showToast, navigateTo } = useApp();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState('cat-electronics');
   const [searchTerm, setSearchTerm] = useState('');
@@ -199,18 +200,23 @@ export const CategoryManagementView = () => {
     <div className="space-y-6 max-w-[1600px] mx-auto pb-16">
       {/* Header Bar */}
       <div className="bg-white border border-slate-200 rounded-md p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-            <span>Catalog</span>
-            <span>/</span>
-            <span className="font-semibold text-slate-800">Category Taxonomy Master</span>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={ArrowLeft}
+            onClick={() => navigateTo('dashboard')}
+          >
+            Back to Dashboard
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <FolderTree className="w-5 h-5 text-blue-600" /> Category & Store Taxonomy Master Page
+            </h1>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Manage store structure, subcategories hierarchy, and dynamic product attribute schemas
+            </p>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <FolderTree className="w-5 h-5 text-blue-600" /> Category & Store Taxonomy Master Page
-          </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Manage store structure, subcategories hierarchy, and dynamic product attribute schemas
-          </p>
         </div>
 
         <div className="flex items-center gap-3">

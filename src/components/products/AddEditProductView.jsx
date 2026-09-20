@@ -84,7 +84,8 @@ export const AddEditProductView = () => {
     addProduct,
     updateProduct,
     navigateTo,
-    showToast
+    showToast,
+    attributes
   } = useApp();
 
   const isEditMode = Boolean(activeProductId);
@@ -526,26 +527,41 @@ export const AddEditProductView = () => {
                       className="w-full text-xs px-3 py-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:border-blue-600 text-slate-900 font-medium"
                     />
 
-                    {/* Quick Preset Pills */}
-                    {field.presets && (
-                      <div className="flex items-center gap-1 flex-wrap pt-0.5">
-                        <span className="text-[10px] text-slate-400 font-medium">Quick suggestions:</span>
-                        {field.presets.map((preset, pIdx) => (
-                          <button
-                            key={pIdx}
-                            type="button"
-                            onClick={() => handleSpecChange(field.key, preset)}
-                            className={`px-2 py-0.5 rounded text-[10px] font-semibold transition-colors ${
-                              dynamicSpecs[field.key] === preset
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
-                            }`}
-                          >
-                            + {preset}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    {/* Dynamic Preset Pills Synced with Attributes Dictionary */}
+                    {(() => {
+                      const matchingAttr = (attributes || []).find(a => 
+                        (a.code && a.code.toLowerCase() === field.key.toLowerCase()) ||
+                        a.name.toLowerCase().includes(field.label.toLowerCase()) ||
+                        field.label.toLowerCase().includes(a.name.toLowerCase())
+                      );
+                      const staticPresets = field.presets || [];
+                      const dynamicPresets = matchingAttr && matchingAttr.values
+                        ? matchingAttr.values.map(v => typeof v === 'string' ? v : v.label)
+                        : [];
+                      const combinedPresets = Array.from(new Set([...staticPresets, ...dynamicPresets]));
+
+                      if (combinedPresets.length === 0) return null;
+
+                      return (
+                        <div className="flex items-center gap-1 flex-wrap pt-0.5">
+                          <span className="text-[10px] text-slate-400 font-medium">Synced attribute options:</span>
+                          {combinedPresets.map((preset, pIdx) => (
+                            <button
+                              key={pIdx}
+                              type="button"
+                              onClick={() => handleSpecChange(field.key, preset)}
+                              className={`px-2 py-0.5 rounded text-[10px] font-semibold transition-colors ${
+                                dynamicSpecs[field.key] === preset
+                                  ? 'bg-blue-600 text-white'
+                                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shadow-2xs'
+                              }`}
+                            >
+                              + {preset}
+                            </button>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </div>
                 ))}
               </div>

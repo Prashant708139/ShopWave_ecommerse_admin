@@ -14,14 +14,16 @@ import {
   XCircle,
   Download,
   Filter,
-  ArrowUpDown
+  ArrowUpDown,
+  ArrowLeft
 } from 'lucide-react';
 
-export const OrdersView = () => {
+export const OrdersView = ({ initialStatus = 'All', initialTab = 'orders' }) => {
   const { orders, updateOrderStatus, navigateTo, setActiveProductId, showToast } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [paymentFilter, setPaymentFilter] = useState('All');
+  const [viewMode, setViewMode] = useState(initialTab);
 
   const statusOptions = [
     { value: 'All', label: 'All Statuses' },
@@ -108,18 +110,23 @@ export const OrdersView = () => {
     <div className="space-y-6 max-w-[1600px] mx-auto pb-16">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-0.5">
-            <span>Orders Management</span>
-            <span>/</span>
-            <span className="font-semibold text-slate-800">All Store Transactions</span>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={ArrowLeft}
+            onClick={() => navigateTo('dashboard')}
+          >
+            Back to Dashboard
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <ShoppingCart className="w-5 h-5 text-blue-600" /> Orders & Tax Invoices Master Page
+            </h1>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Process customer orders, issue invoices, and track fulfillment status
+            </p>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5 text-blue-600" /> Orders & Tax Invoices Master Page
-          </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Process customer orders, issue invoices, and track fulfillment status
-          </p>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">

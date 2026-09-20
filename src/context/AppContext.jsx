@@ -10,6 +10,7 @@ import {
   INITIAL_PROMOTIONS,
   DATE_RANGE_DATA
 } from '../data/mockData';
+import { CATALOG_ATTRIBUTES } from '../data/catalogData';
 
 const AppContext = createContext();
 
@@ -83,6 +84,11 @@ export const AppProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : CATEGORY_TREE_DATA;
   });
 
+  const [attributes, setAttributes] = useState(() => {
+    const saved = localStorage.getItem('shopwave_attributes');
+    return saved ? JSON.parse(saved) : CATALOG_ATTRIBUTES;
+  });
+
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('shopwave_settings');
     return saved ? JSON.parse(saved) : {
@@ -101,6 +107,33 @@ export const AppProvider = ({ children }) => {
       lowStockThreshold: 5
     };
   });
+
+  const [seoConfig, setSeoConfig] = useState(() => {
+    const saved = localStorage.getItem('shopwave_seo');
+    return saved ? JSON.parse(saved) : {
+      metaTitle: 'ShopWave | Premium E-Commerce Online Store India',
+      metaDescription: 'Shop latest electronics, fashion, footwear, and home living products at ShopWave with best deals and instant express delivery across India.',
+      keywords: 'shopwave, online shopping, mobile phones, electronics, fashion, buy shoes',
+      canonicalUrl: 'https://shopwave.com',
+      ogTitle: "ShopWave - India's Premier Online Shopping Destination",
+      ogDescription: 'Discover 10,000+ curated products in electronics, apparel, & home essentials with free shipping & COD.',
+      ogImage: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1200&q=80',
+      robotsTxt: 'User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /checkout/\nSitemap: https://shopwave.com/sitemap.xml',
+      gtmContainerId: 'GTM-SW9842K',
+      searchConsoleCode: 'google-site-verification=ShopWave_Verify_2026_x892a',
+      structuredDataEnabled: true,
+      sitemapLastGenerated: 'Sep 19, 2026'
+    };
+  });
+
+  const updateSeoConfig = (newConfig) => {
+    setSeoConfig(prev => {
+      const updated = { ...prev, ...newConfig };
+      localStorage.setItem('shopwave_seo', JSON.stringify(updated));
+      return updated;
+    });
+    showToast('Storefront SEO & Meta Tags updated and applied successfully!');
+  };
 
   // Toast State
   const [toast, setToast] = useState(null);
@@ -158,8 +191,165 @@ export const AppProvider = ({ children }) => {
   }, [categoryTree]);
 
   useEffect(() => {
+    localStorage.setItem('shopwave_attributes', JSON.stringify(attributes));
+  }, [attributes]);
+
+  useEffect(() => {
     localStorage.setItem('shopwave_settings', JSON.stringify(settings));
   }, [settings]);
+
+  useEffect(() => {
+    localStorage.setItem('shopwave_seo', JSON.stringify(seoConfig));
+  }, [seoConfig]);
+
+  // Sync SEO metadata with browser DOM document head in real-time
+  useEffect(() => {
+    if (!seoConfig) return;
+
+    if (seoConfig.metaTitle) {
+      document.title = seoConfig.metaTitle;
+    }
+
+    const updateMeta = (selector, attrName, attrVal, content) => {
+      let element = document.querySelector(selector);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attrName, attrVal);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content || '');
+    };
+
+    const updateLink = (rel, href) => {
+      let link = document.querySelector(`link[rel="${rel}"]`);
+      if (!link) {
+        link = document.createElement('link');
+        link.setAttribute('rel', rel);
+        document.head.appendChild(link);
+      }
+      link.setAttribute('href', href || '');
+    };
+
+    updateMeta('meta[name="description"]', 'name', 'description', seoConfig.metaDescription);
+    updateMeta('meta[name="keywords"]', 'name', 'keywords', seoConfig.keywords);
+    updateMeta('meta[property="og:title"]', 'property', 'og:title', seoConfig.ogTitle || seoConfig.metaTitle);
+    updateMeta('meta[property="og:description"]', 'property', 'og:description', seoConfig.ogDescription || seoConfig.metaDescription);
+    updateMeta('meta[property="og:image"]', 'property', 'og:image', seoConfig.ogImage);
+
+    if (seoConfig.canonicalUrl) {
+      updateLink('canonical', seoConfig.canonicalUrl);
+    }
+
+    // JSON-LD Structured Data
+    let scriptTag = document.querySelector('script[type="application/ld+json"]#seo-jsonld');
+    if (seoConfig.structuredDataEnabled) {
+      if (!scriptTag) {
+        scriptTag = document.createElement('script');
+        scriptTag.setAttribute('type', 'application/ld+json');
+        scriptTag.setAttribute('id', 'seo-jsonld');
+        document.head.appendChild(scriptTag);
+      }
+      const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "ShopWave",
+        "url": seoConfig.canonicalUrl || "https://shopwave.com",
+        "description": seoConfig.metaDescription,
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": `${seoConfig.canonicalUrl || "https://shopwave.com"}/search?q={search_term_string}`,
+          "query-input": "required name=search_term_string"
+        }
+      };
+      scriptTag.textContent = JSON.stringify(jsonLd, null, 2);
+    } else if (scriptTag) {
+      scriptTag.remove();
+    }
+  }, [seoConfig]);
+
+  // Attributes Functions
+  const addAttribute = (attrData) => {
+    const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const newAttr = {
+      id: `attr-${Date.now()}`,
+      name: attrData.name,
+      code: attrData.code || attrData.name.toLowerCase().replace(/[^a-z0-9]+/g, '_'),
+      type: attrData.type || 'Selection Pill',
+      category: attrData.category || 'All Categories',
+      isVariantDriver: attrData.isVariantDriver !== undefined ? attrData.isVariantDriver : true,
+      isFilterable: attrData.isFilterable !== undefined ? attrData.isFilterable : true,
+      linkedProductsCount: 0,
+      values: attrData.values || [],
+      lastUpdated: todayStr
+    };
+    setAttributes(prev => [newAttr, ...prev]);
+    showToast(`Attribute "${newAttr.name}" created!`);
+    return newAttr;
+  };
+
+  const updateAttribute = (id, updatedFields) => {
+    const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    setAttributes(prev => prev.map(a => {
+      if (a.id === id) {
+        return {
+          ...a,
+          ...updatedFields,
+          lastUpdated: todayStr
+        };
+      }
+      return a;
+    }));
+    showToast('Attribute updated successfully!');
+  };
+
+  const deleteAttribute = (id, name) => {
+    setAttributes(prev => prev.filter(a => a.id !== id));
+    showToast(`Attribute "${name || id}" deleted.`, 'info');
+  };
+
+  const toggleAttributeFlag = (id, fieldName) => {
+    setAttributes(prev => prev.map(a => {
+      if (a.id === id) {
+        const updated = { ...a, [fieldName]: !a[fieldName] };
+        showToast(`${a.name} ${fieldName} set to ${updated[fieldName] ? 'Active' : 'Disabled'}`);
+        return updated;
+      }
+      return a;
+    }));
+  };
+
+  const addAttributeValue = (attributeId, valueObj) => {
+    const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    setAttributes(prev => prev.map(a => {
+      if (a.id === attributeId) {
+        const valItem = typeof valueObj === 'string'
+          ? { id: `val-${Date.now()}`, label: valueObj, meta: 'Custom Variant' }
+          : { id: `val-${Date.now()}`, ...valueObj };
+        return {
+          ...a,
+          values: [...a.values, valItem],
+          lastUpdated: todayStr
+        };
+      }
+      return a;
+    }));
+    showToast('Attribute value added successfully!');
+  };
+
+  const deleteAttributeValue = (attributeId, valueId) => {
+    const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    setAttributes(prev => prev.map(a => {
+      if (a.id === attributeId) {
+        return {
+          ...a,
+          values: a.values.filter(v => v.id !== valueId && v.label !== valueId),
+          lastUpdated: todayStr
+        };
+      }
+      return a;
+    }));
+    showToast('Attribute value removed.');
+  };
 
   // Auth Functions
   const login = (email, password, name = null) => {
@@ -390,14 +580,37 @@ export const AppProvider = ({ children }) => {
   };
 
   const addBrandItem = (brandData) => {
+    const brandName = (brandData.name || '').trim();
+    if (!brandName) {
+      showToast('Please enter a valid brand name!', 'error');
+      return false;
+    }
+
+    const isDuplicate = brands.some(
+      (b) => b.name.toLowerCase().trim() === brandName.toLowerCase()
+    );
+
+    if (isDuplicate) {
+      showToast(`Brand "${brandName}" already exists! Please enter a unique name.`, 'error');
+      return false;
+    }
+
     const newBrand = {
       id: `brand-${Date.now()}`,
+      name: brandName,
+      category: brandData.category || 'Electronics',
       count: 0,
-      logo: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=50&q=80',
-      ...brandData
+      logo: brandData.logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=50&q=80',
     };
-    setBrands(prev => [newBrand, ...prev]);
-    showToast(`Brand "${newBrand.name}" added!`);
+
+    setBrands((prev) => [newBrand, ...prev]);
+    showToast(`Brand "${newBrand.name}" added successfully!`);
+    return newBrand;
+  };
+
+  const deleteBrandItem = (id, name) => {
+    setBrands((prev) => prev.filter((b) => b.id !== id));
+    showToast(`Brand "${name || 'Partner'}" deleted from directory.`, 'info');
   };
 
   // Promotions
@@ -500,8 +713,17 @@ export const AppProvider = ({ children }) => {
         categoryTree,
         addCategoryItem,
 
+        attributes,
+        addAttribute,
+        updateAttribute,
+        deleteAttribute,
+        toggleAttributeFlag,
+        addAttributeValue,
+        deleteAttributeValue,
+
         brands,
         addBrandItem,
+        deleteBrandItem,
 
         promotions,
         addPromotionCode,
@@ -509,6 +731,10 @@ export const AppProvider = ({ children }) => {
 
         settings,
         setSettings,
+
+        seoConfig,
+        updateSeoConfig,
+        setSeoConfig,
 
         dynamicMetrics: currentDynamicMetrics,
         currentSalesChart,
